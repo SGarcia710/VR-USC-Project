@@ -7,11 +7,11 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=no"
     />
-    <script src="../three.js"></script>
-    <script src="../DragControls.js"></script>
-    <script src="../Reflector.js"></script>
-    <script src="../Refractor.js"></script>
-    <script src="./Logic.js"></script>
+    <script src="./src/three.js"></script>
+    <script src="./src/DragControls.js"></script>
+    <script src="./src/Reflector.js"></script>
+    <script src="./src/Refractor.js"></script>
+    <script src="./src/Logic.js"></script>
 
     <!--LEO-->
   </head>
@@ -22,8 +22,8 @@
     <script type="module">
       import { SceneUtils } from "https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/utils/SceneUtils.js";
 
-      import * as WEBVR from "../WebVR.js";
-      import * as Water from "../Water2.js";
+      import * as WEBVR from "./src/WebVR.js";
+      import * as Water from "./src/Water2.js";
 
       var clock = new THREE.Clock();
       var container;
@@ -87,7 +87,7 @@
 
         //Skybox
         var cubeTextureLoader = new THREE.CubeTextureLoader();
-        cubeTextureLoader.setPath("./textures/");
+        cubeTextureLoader.setPath("./assets/textures/");
         var cubeTexture = cubeTextureLoader.load([
           "px.jpg",
           "nx.jpg",
@@ -100,7 +100,9 @@
 
         //Agua
         var aguaGeometry = new THREE.PlaneBufferGeometry(40, 40);
-        var flowMap = textureLoader.load("./textures/water/Water_1_M_Flow.jpg");
+        var flowMap = textureLoader.load(
+          "./assets/textures/water/Water_1_M_Flow.jpg"
+        );
         agua = new THREE.Water(aguaGeometry, {
           scale: 2,
           textureWidth: 1024,
