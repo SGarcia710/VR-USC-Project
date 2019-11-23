@@ -272,10 +272,21 @@
         pickHelper = new ControllerPickHelper(scene);
 
         pickHelper.addEventListener("selectstart", event => {
+          
           const { controller, selectedObject } = event;
+
           startColor = selectedObject.material.color.getHex();
+
+          velX = selectedObject.userData.velocity.x;
+          velY = selectedObject.userData.velocity.y;
+          velZ = selectedObject.userData.velocity.z;
+          selectedObject.userData.velocity.x = 0;
+          selectedObject.userData.velocity.y = 0;
+          selectedObject.userData.velocity.z = 0;
+          
           const existingSelection = controllerToSelection.get(controller);
           if (!existingSelection) {
+            onMouseDown();
             controllerToSelection.set(controller, {
               object: selectedObject,
               parent: selectedObject.parent
@@ -305,6 +316,10 @@
           const { controller } = event;
           const selection = controllerToSelection.get(controller);
           if (selection) {
+            onMouseUp();
+            selection.object.userData.velocity.x = velX / 2;
+            selection.object.userData.velocity.y = velY / 2;
+            selection.object.userData.velocity.z = velZ / 2;
             controllerToSelection.delete(controller);
             SceneUtils.detach(selection.object, controller, scene);
             SceneUtils.attach(selection.object, scene, selection.parent);
@@ -325,31 +340,6 @@
           return needResize;
         }
 
-        /*
-        function renderprueba(time) {
-          time *= 0.001;
-
-          if (
-            !renderer.vr.isPresenting() &&
-            resizeRendererToDisplaySize(renderer)
-          ) {
-            const canvas = renderer.domElement;
-            camera.aspect = canvas.clientWidth / canvas.clientHeight;
-            camera.updateProjectionMatrix();
-          }
-
-          let ndx = 0;
-          for (const mesh of meshToMeshMap.keys()) {
-            const speed = 1 + ndx * 0.1;
-            const rot = time * speed;
-            mesh.rotation.x = rot;
-            mesh.rotation.y = rot;
-            ++ndx;
-          }
-
-          pickHelper.update(scene, time);
-        }
-        */
       }
       /*
             function dragStarCallback(event) {
@@ -371,8 +361,7 @@
               event.object.userData.velocity.z = velZ / 2;
               event.object.material.color.setHex(startColor);
             }
-						
-
+			*/
       function onMouseDown() {
         cont = 0;
         isMouseDown = true;
@@ -383,7 +372,7 @@
         isMouseDown = false;
       }
 
-      */
+      
 
       function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -466,16 +455,7 @@
             }
           });
         });
-        /*
-        if (
-          !renderer.vr.isPresenting() &&
-          resizeRendererToDisplaySize(renderer)
-        ) {
-          const canvas = renderer.domElement;
-          camera.aspect = canvas.clientWidth / canvas.clientHeight;
-          camera.updateProjectionMatrix();
-        }
-*/
+
         let ndx = 0;
         for (const mesh of objetos) {
           const speed = 1 + ndx * 0.1;
