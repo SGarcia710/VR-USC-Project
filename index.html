@@ -12,6 +12,7 @@
     <script src="./src/Reflector.js"></script>
     <script src="./src/Refractor.js"></script>
     <script src="./src/Logic.js"></script>
+    <script src="./src/datguivr.js"></script>
 
     <!--LEO-->
   </head>
@@ -42,11 +43,13 @@
       var PAREDESCUADRO = 4;
       var pickHelper;
 
+      var gui;
+			var logica = new Logic();
+
       init();
       animate();
 
       function init() {
-        console.log("Entre a INIT");
         document.getElementById("pregunta").innerHTML = logica.pregunta;
         container = document.createElement("div");
         document.body.appendChild(container);
@@ -119,9 +122,9 @@
         scene.add(light);
 
         var colors = [];
-        colors.push(0xaa88b2); // Hidrogreno
-        colors.push(0x88a2b2); // Oxigeno
-        colors.push(0xdc827e); // Carbono
+        colors.push(0xAA88B2); // Hidrogreno
+        colors.push(0x88A2B2); // Oxigeno
+        colors.push(0x7EDC88); // Carbono
         colors.push(0x7edc88); // Sodio
         colors.push(0xf4fa58); // Cloro
         colors.push(0x7edcd4); // Silicio
@@ -272,13 +275,15 @@
           
           const { controller, selectedObject } = event;
 
+          startColor = selectedObject.material.color.getHex();
+
           velX = selectedObject.userData.velocity.x;
           velY = selectedObject.userData.velocity.y;
           velZ = selectedObject.userData.velocity.z;
           selectedObject.userData.velocity.x = 0;
           selectedObject.userData.velocity.y = 0;
           selectedObject.userData.velocity.z = 0;
-
+          
           const existingSelection = controllerToSelection.get(controller);
           if (!existingSelection) {
             onMouseDown();
@@ -289,6 +294,22 @@
             SceneUtils.detach(selectedObject, selectedObject.parent, scene);
             SceneUtils.attach(selectedObject, scene, controller);
           }
+
+        var aux = logica.cambioColor(startColor);
+        var aux2 = logica.game(startColor);
+        
+				scene.remove(gui);
+
+				// crear el gui
+				gui = dat.GUIVR.create(aux +" "+ aux2);
+
+				gui.position.x = 0;
+				gui.position.y = 2;
+				gui.position.z = -1.5;
+				
+				scene.add(gui);
+				dat.GUIVR.enableMouse( camera );
+
         });
 
         pickHelper.addEventListener("selectend", event => {
@@ -303,6 +324,9 @@
             SceneUtils.detach(selection.object, controller, scene);
             SceneUtils.attach(selection.object, scene, selection.parent);
           }
+              document.getElementById("causa").innerHTML = logica.game(startColor);
+              document.getElementById("pregunta").innerHTML = logica.pregunta;
+
         });
 
         function resizeRendererToDisplaySize(renderer) {

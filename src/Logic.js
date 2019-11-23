@@ -112,23 +112,23 @@ class Logic{
             return false;
     }
 
-    _cambioColor(color){
+    cambioColor(color){
         if(color == 0xAA88B2)
             return 'H';
         else if(color == 0x88A2B2)
             return 'O';
-        else if(color == 0x7EDC88)
+        else if(color == 0x7edc88)
             return 'S';
-        else if(color == 0xDC827E)
+        else if(color == 0x7EDC88)
             return 'C';
         else if(color == 0xF4FA58)
             return 'Cl';
-        else if(color == 0xDA33FF)
+        else if(color == 0x7edcd4)
             return 'Si';
     }
 
     game(color){
-        var atomo = this._cambioColor(color);
+        var atomo = this.cambioColor(color);
 
         console.log(atomo);
         // Variable de Index
