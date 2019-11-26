@@ -129,7 +129,7 @@
         colors.push(0xf4fa58); // Cloro
         colors.push(0x7edcd4); // Silicio
 
-        var geometry = new THREE.IcosahedronGeometry(RADIUS, 2);
+        var geometry = new THREE.IcosahedronGeometry(RADIUS, 3);
         for (var i = 0, j = 0; i < 300; i++, j++) {
           if (j == 6) j = 0;
           var object = new THREE.Mesh(
@@ -296,13 +296,14 @@
           }
 
         var aux = logica.cambioColor(startColor);
-        var aux2 = logica.game(startColor);
+        var aux2 = logica.pregunta;
         
 				scene.remove(gui);
 
 				// crear el gui
 				gui = dat.GUIVR.create(aux +" "+ aux2);
-
+        
+      
 				gui.position.x = 0;
 				gui.position.y = 2;
 				gui.position.z = -1.5;
@@ -433,9 +434,9 @@
             );
             cube.userData.velocity.z = -cube.userData.velocity.z;
           }
-          cube.rotation.x += cube.userData.velocity.x * 2 * delta;
-          cube.rotation.y += cube.userData.velocity.y * 2 * delta;
-          cube.rotation.z += cube.userData.velocity.z * 2 * delta;
+          //cube.rotation.x += cube.userData.velocity.x * 2 * delta;
+          //cube.rotation.y += cube.userData.velocity.y * 2 * delta;
+          //cube.rotation.z += cube.userData.velocity.z * 2 * delta;
 
           objetos.forEach(element2 => {
             var object2 = element2;
@@ -460,8 +461,8 @@
         for (const mesh of objetos) {
           const speed = 1 + ndx * 0.1;
           const rot = delta * speed;
-          mesh.rotation.x = rot;
-          mesh.rotation.y = rot;
+          //mesh.rotation.x = rot;
+          //mesh.rotation.y = rot;
           ++ndx;
         }
 
