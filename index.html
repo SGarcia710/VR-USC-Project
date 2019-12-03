@@ -14,6 +14,7 @@
     <script src="./src/Refractor.js"></script>
     <script src="./src/Logic.js"></script>
     <script src="./src/datguivr.js"></script>
+    <script type="text/javascript" src="./src/statsvr.min.js"></script>
   </head>
 
   <body>
@@ -43,6 +44,7 @@
       var pickHelper;
       var gui, gui2;
       var geoMusic;
+      var statsVR;
 
       init();
       animate();
@@ -64,6 +66,13 @@
 
         //Fog
         scene.fog = new THREE.FogExp2(0xefd1b5, 0.2);
+
+        //StatsVR
+
+        statsVR = new StatsVR(scene, camera);
+        statsVR.setX(-7);
+        statsVR.setY(3.5);
+        statsVR.setZ(-6);
 
         //Suelo
         var pisoMallaG = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
@@ -428,7 +437,7 @@
             }
           });
         });
-
+        statsVR.update();
         pickHelper.update(scene, delta, objetos);
         renderer.render(scene, camera);
       }
