@@ -307,9 +307,9 @@
       function dragStarCallback(event) {
         cont = 0;
         isMouseDown = true;
-        makeGUI();
         event.object.userData.grab = true;
         startColor = event.object.material.color.getHex();
+        makeGUI();
         velX = event.object.userData.velocity.x;
         velY = event.object.userData.velocity.y;
         velZ = event.object.userData.velocity.z;
@@ -354,12 +354,8 @@
         }
 
         var dato = logica.game(startColor);
-        console.log(dato);
-        if (dato == "PARTICULA COMPLETA") {
-          console.log("AJA Y ENTONCES?");
-          completaSound.play();
-        }
-
+        if (dato == "PARTICULA COMPLETA") completaSound.play();
+        
         gui
           .add(objetos[0].position, "y", 0, 0)
           .step(1)

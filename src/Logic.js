@@ -159,7 +159,7 @@ class Logic {
           else return "Se sumo 1 al atomo " + atomo;
           // Si la cantidad de atomos es igual a la necesaria antes de realizar el aumento en 1
         } else if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
-          return "Moleculas llenas";
+          return "Grupo " + atomo + " lleno";
 
     // Si i es 0 quiere decir que no se encontro el atomo en la molecula
     if (i != 0) return "Error en el atomo: " + atomo;
