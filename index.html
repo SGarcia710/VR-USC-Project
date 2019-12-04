@@ -359,16 +359,19 @@
         }
 
         var dato = logica.game(startColor);
-        if (dato.charAt(0) == "P") completaSound.play();
+        if (dato.charAt(0) == "P") {
+          if (completaSound.isPlaying) completaSound.stop();
+          completaSound.play();
+        }
         if (dato.charAt(0) == "E") {
           if (failSound.isPlaying) failSound.stop();
           failSound.play();
-        } 
+        }
         if (dato.charAt(0) == "G") {
           if (fullSound.isPlaying) fullSound.stop();
           fullSound.play();
-        } 
-        if (dato.charAt(0) == "A") {
+        }
+        if (dato.charAt(0) == "A" /* || dato.charAt(0) == "A" */) {
           if (goodSound.isPlaying) goodSound.stop();
           goodSound.play();
         }

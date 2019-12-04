@@ -155,13 +155,13 @@ class Logic {
           }
           // Si la cantidad de atomos es igual a la necesaria
           if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
-            return "Se lleno el atomo " + atomo;
-          else return "Aumentó 1 al atomo " + atomo;
+            return "Se llenó el átomo " + atomo;
+          else return "Aumentó 1 al átomo " + atomo;
           // Si la cantidad de atomos es igual a la necesaria antes de realizar el aumento en 1
         } else if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
           return "Grupo '" + atomo + "' lleno";
 
     // Si i es 0 quiere decir que no se encontro el atomo en la molecula
-    if (i != 0) return "Error en el atomo: " + atomo;
+    if (i != 0) return "Error en el átomo: " + atomo;
   }
 }
