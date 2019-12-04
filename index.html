@@ -14,13 +14,9 @@
     <script src="./src/Refractor.js"></script>
     <script src="./src/Logic.js"></script>
     <script src="./src/datguivr.js"></script>
-    <script type="text/javascript" src="./src/statsvr.min.js"></script>
   </head>
 
   <body>
-    <p id="pregunta"></p>
-    <p id="causa"></p>
-
     <script type="module">
       import { SceneUtils } from "https://threejsfundamentals.org/threejs/resources/threejs/r110/examples/jsm/utils/SceneUtils.js";
       import * as WEBVR from "./src/WebVR.js";
@@ -66,13 +62,6 @@
 
         //Fog
         scene.fog = new THREE.FogExp2(0xefd1b5, 0.2);
-
-        //StatsVR HOLA
-
-        statsVR = new StatsVR(scene, camera);
-        statsVR.setX(-7);
-        statsVR.setY(3.5);
-        statsVR.setZ(-6);
 
         //Suelo
         var pisoMallaG = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
@@ -180,7 +169,7 @@
           sound.setLoop(true);
           sound.setVolume(0.2);
           sound.setRefDistance(80);
-          sound.play();
+          //sound.play();
         });
 
         geoMusic.add(sound);
@@ -214,15 +203,16 @@
 
         window.addEventListener("resize", onWindowResize, false);
 
+        /*
         var controls = new THREE.DragControls(
           objetos,
           camera,
           renderer.domElement
         );
-        /*
+        
         controls.addEventListener("dragstart", dragStarCallback);
         controls.addEventListener("dragend", dragEndCallback);
-*/
+        */
         document.body.appendChild(THREE.WEBVR.createButton(renderer));
 
         const controllerToSelection = new Map();
@@ -437,7 +427,6 @@
             }
           });
         });
-        statsVR.update();
         pickHelper.update(scene, delta, objetos);
         renderer.render(scene, camera);
       }

@@ -1,7 +1,6 @@
 class ControllerPickHelper extends THREE.EventDispatcher {
   constructor(scene, renderer) {
     super();
-    console.log("ENTRE A LA CLASE");
     this.raycaster = new THREE.Raycaster();
     this.objectToColorMap = new Map();
     this.controllerToObjectMap = new Map();
