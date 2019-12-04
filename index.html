@@ -25,27 +25,29 @@
       const RADIUS = 0.15;
       const PAREDESCUADRO = 4;
       const CANTATOMOS = 200;
+
       var clock = new THREE.Clock();
       var normal = new THREE.Vector3();
       var relativeVelocity = new THREE.Vector3();
       var logica = new Logic();
+
+      var objetos = [];
       var container;
       var camera, scene, renderer, agua, textureLoader;
       var room;
-      var isMouseDown = false;
-      var objetos = [];
+      var isMouseDown;
       var startColor;
       var cont;
       var velX, velY, velZ;
       var pickHelper;
       var gui, gui2;
       var geoMusic;
-      var statsVR;
 
       init();
       animate();
 
       function init() {
+        isMouseDown = false;
         container = document.createElement("div");
         document.body.appendChild(container);
         scene = new THREE.Scene();
@@ -157,22 +159,35 @@
         geoMusic.position.z = -0.8;
         scene.add(geoMusic);
 
-        //MUSICAAAAA
         var listener = new THREE.AudioListener();
         camera.add(listener);
 
-        var sound = new THREE.PositionalAudio(listener);
+        var ambientalMusic = new THREE.PositionalAudio(listener);
 
         var audioLoader = new THREE.AudioLoader();
         audioLoader.load("./assets/Music/FromHere.ogg", function(buffer) {
-          sound.setBuffer(buffer);
-          sound.setLoop(true);
-          sound.setVolume(0.2);
-          sound.setRefDistance(80);
-          //sound.play();
+          ambientalMusic.setBuffer(buffer);
+          ambientalMusic.setLoop(true);
+          ambientalMusic.setVolume(0.2);
+          ambientalMusic.setRefDistance(80);
+          //ambientalMusic.play();
         });
 
-        geoMusic.add(sound);
+        geoMusic.add(ambientalMusic);
+
+        // create a global audio source
+        var seaMusic = new THREE.Audio( listener );
+
+        // load a sound and set it as the Audio object's buffer
+        var audioLoader = new THREE.AudioLoader();
+        audioLoader.load( './assets/Music/0267.ogg', function( buffer ) {
+          seaMusic.setBuffer( buffer );
+          seaMusic.setLoop( true );
+          seaMusic.setVolume( 0.1 );
+          seaMusic.play();
+        });
+
+        agua.add(seaMusic);
 
         for (var i = 0, j = 0; i < CANTATOMOS; i++, j++) {
           if (j == 6) j = 0;
@@ -203,18 +218,18 @@
 
         window.addEventListener("resize", onWindowResize, false);
 
-        /*
         var controls = new THREE.DragControls(
           objetos,
           camera,
           renderer.domElement
         );
-        
+
         controls.addEventListener("dragstart", dragStarCallback);
         controls.addEventListener("dragend", dragEndCallback);
-        */
+
         document.body.appendChild(THREE.WEBVR.createButton(renderer));
 
+        /*
         const controllerToSelection = new Map();
         pickHelper = new ControllerPickHelper(scene, renderer, objetos);
 
@@ -264,22 +279,18 @@
           document.getElementById("causa").innerHTML = logica.game(startColor);
           document.getElementById("pregunta").innerHTML = logica.pregunta;
         });
+        */
 
         function resizeRendererToDisplaySize(renderer) {
           const canvas = renderer.domElement;
           const width = canvas.clientWidth;
           const height = canvas.clientHeight;
           const needResize = canvas.width !== width || canvas.height !== height;
-          if (needResize) {
-            renderer.setSize(width, height, false);
-          }
+          if (needResize) renderer.setSize(width, height, false);
           return needResize;
         }
       }
 
-      //HOLAOLA
-
-      /*
       function dragStarCallback(event) {
         cont = 0;
         isMouseDown = true;
@@ -303,7 +314,6 @@
         event.object.userData.velocity.z = velZ / 2;
         event.object.material.color.setHex(startColor);
       }
-      */
 
       function makeGUI() {
         scene.remove(gui);
@@ -318,18 +328,16 @@
         var bandera = true;
         for (var i = 0; i < cant; i++) {
           bandera = true;
-          for (var j = i + 1; j < cant; j++) {
+          for (var j = i + 1; j < cant; j++)
             if (moles[i] == moles[j]) {
               bandera = false;
               break;
             }
-          }
-          if (bandera) {
+          if (bandera)
             gui
               .add(objetos[0].position, "y", atomos[i], atomos[i])
               .step(1)
               .name(moles[i]);
-          }
         }
         gui
           .add(objetos[0].position, "y", 0, 0)
@@ -427,7 +435,7 @@
             }
           });
         });
-        pickHelper.update(scene, delta, objetos);
+        //pickHelper.update(scene, delta, objetos);
         renderer.render(scene, camera);
       }
     </script>
