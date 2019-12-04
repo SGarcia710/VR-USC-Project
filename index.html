@@ -42,7 +42,7 @@
       var pickHelper;
       var gui, gui2;
       var geoMusic;
-      var completaSound;
+      var completaSound, failSound;
 
       init();
       animate();
@@ -61,12 +61,11 @@
           10
         );
         scene.add(camera);
+
         textureLoader = new THREE.TextureLoader();
 
-        //Fog
         scene.fog = new THREE.FogExp2(0xefd1b5, 0.2);
 
-        //Suelo
         var pisoMallaG = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
         var pisoMallaM = new THREE.MeshBasicMaterial({
           color: 0x0000,
@@ -77,7 +76,6 @@
         pisoMalla.position.x = 0;
         scene.add(pisoMalla);
 
-        //Skybox
         var cubeTextureLoader = new THREE.CubeTextureLoader();
         cubeTextureLoader.setPath("./assets/textures/");
         var cubeTexture = cubeTextureLoader.load([
@@ -110,38 +108,6 @@
         light.position.set(1, 1, 1).normalize();
         scene.add(light);
 
-        gui2 = dat.GUIVR.create("Colores: ");
-
-        gui2.position.set(-0.25, 2.3, -1);
-        gui2.rotation.set(Math.PI / 20, 0, 0);
-        scene.add(gui2);
-
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("H: Blanco");
-
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("O: Rojo");
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("C: Gris");
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("Na: Verde");
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("Cl: Amarillo");
-        gui2
-          .add(light.position, "y", 0, 0)
-          .step(1)
-          .name("Si: Morado");
-
         var colors = [];
         colors.push(0xfaf7f0); // Hidrogreno H
         colors.push(0xa10305); // Oxigeno O
@@ -151,56 +117,6 @@
         colors.push(0x959be9); // Silicio gris brillante Si
 
         var geometry = new THREE.IcosahedronGeometry(RADIUS, 3);
-
-        geoMusic = new THREE.Mesh(
-          new THREE.SphereGeometry(0.1, 0.1, 0.1),
-          new THREE.MeshLambertMaterial({ wireframe: true })
-        );
-        geoMusic.position.y = 2;
-        geoMusic.position.z = -0.8;
-        scene.add(geoMusic);
-
-        var listener = new THREE.AudioListener();
-        camera.add(listener);
-
-        var ambientalMusic = new THREE.PositionalAudio(listener);
-
-        var audioLoader = new THREE.AudioLoader();
-        audioLoader.load("./assets/Music/FromHere.ogg", function(buffer) {
-          ambientalMusic.setBuffer(buffer);
-          ambientalMusic.setLoop(true);
-          ambientalMusic.setVolume(0.15);
-          ambientalMusic.setRefDistance(80);
-          //ambientalMusic.play();
-        });
-
-        geoMusic.add(ambientalMusic);
-
-        // create a global audio source
-        var seaMusic = new THREE.Audio(listener);
-
-        // load a sound and set it as the Audio object's buffer
-        var audioLoader = new THREE.AudioLoader();
-        audioLoader.load("./assets/Music/0267.ogg", function(buffer) {
-          seaMusic.setBuffer(buffer);
-          seaMusic.setLoop(true);
-          seaMusic.setVolume(0.1);
-          seaMusic.play();
-        });
-
-        agua.add(seaMusic);
-
-        // create a global audio source
-        completaSound = new THREE.Audio(listener);
-
-        // load a sound and set it as the Audio object's buffer
-        var audioLoader = new THREE.AudioLoader();
-        audioLoader.load("./assets/Music/1112.ogg", function(buffer) {
-          completaSound.setBuffer(buffer);
-          completaSound.setVolume(1);
-        });
-
-        agua.add(completaSound);
 
         for (var i = 0, j = 0; i < CANTATOMOS; i++, j++) {
           if (j == 6) j = 0;
@@ -294,14 +210,89 @@
         });
         */
 
-        function resizeRendererToDisplaySize(renderer) {
-          const canvas = renderer.domElement;
-          const width = canvas.clientWidth;
-          const height = canvas.clientHeight;
-          const needResize = canvas.width !== width || canvas.height !== height;
-          if (needResize) renderer.setSize(width, height, false);
-          return needResize;
-        }
+        GUIGuia(light);
+        initMusic();
+      }
+
+      function GUIGuia(light) {
+        gui2 = dat.GUIVR.create("Colores: ");
+
+        gui2.position.set(-0.25, 2.3, -1);
+        gui2.rotation.set(Math.PI / 20, 0, 0);
+        scene.add(gui2);
+
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("H: Blanco");
+
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("O: Rojo");
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("C: Gris");
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("Na: Verde");
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("Cl: Amarillo");
+        gui2
+          .add(light.position, "y", 0, 0)
+          .step(1)
+          .name("Si: Morado");
+      }
+
+      function initMusic() {
+        geoMusic = new THREE.Mesh(
+          new THREE.SphereGeometry(0.1, 0.1, 0.1),
+          new THREE.MeshLambertMaterial({ wireframe: true })
+        );
+        geoMusic.position.y = 2;
+        geoMusic.position.z = -0.8;
+        scene.add(geoMusic);
+
+        var listener = new THREE.AudioListener();
+        camera.add(listener);
+        var audioLoader = new THREE.AudioLoader();
+
+        var ambientalMusic = new THREE.PositionalAudio(listener);
+        audioLoader.load("./assets/Music/FromHere.ogg", function(buffer) {
+          ambientalMusic.setBuffer(buffer);
+          ambientalMusic.setLoop(true);
+          ambientalMusic.setVolume(0.15);
+          ambientalMusic.setRefDistance(80);
+          ambientalMusic.play();
+        });
+        geoMusic.add(ambientalMusic);
+
+        var seaMusic = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/0267.ogg", function(buffer) {
+          seaMusic.setBuffer(buffer);
+          seaMusic.setLoop(true);
+          seaMusic.setVolume(0.1);
+          seaMusic.play();
+        });
+        agua.add(seaMusic);
+
+        completaSound = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/1112.ogg", function(buffer) {
+          completaSound.setBuffer(buffer);
+          completaSound.setVolume(1);
+        });
+        agua.add(completaSound);
+
+        failSound = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/1501.ogg", function(buffer) {
+          failSound.setBuffer(buffer);
+          failSound.setVolume(1);
+        });
+        agua.add(failSound);
       }
 
       function dragStarCallback(event) {
@@ -354,8 +345,13 @@
         }
 
         var dato = logica.game(startColor);
-        if (dato == "PARTICULA COMPLETA") completaSound.play();
-        
+        if (dato.charAt(0) == "P") completaSound.play();
+        else if (dato.charAt(0) == "E") {
+          //if (failSound.isPlaying()) failSound.stop();
+          failSound.play();
+          failSound.stop();
+          failSound.play();
+        }
         gui
           .add(objetos[0].position, "y", 0, 0)
           .step(1)
