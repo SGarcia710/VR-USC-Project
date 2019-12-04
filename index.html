@@ -42,7 +42,7 @@
       var pickHelper;
       var gui, gui2;
       var geoMusic;
-      var completaSound, failSound;
+      var completaSound, failSound, fullSound, goodSound;
 
       init();
       animate();
@@ -287,12 +287,26 @@
         });
         agua.add(completaSound);
 
+        goodSound = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/pull-out.ogg", function(buffer) {
+          goodSound.setBuffer(buffer);
+          goodSound.setVolume(1);
+        });
+        agua.add(goodSound);
+
         failSound = new THREE.Audio(listener);
         audioLoader.load("./assets/Music/1501.ogg", function(buffer) {
           failSound.setBuffer(buffer);
-          failSound.setVolume(0.1);
+          failSound.setVolume(1);
         });
         agua.add(failSound);
+
+        fullSound = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/0128.ogg", function(buffer) {
+          fullSound.setBuffer(buffer);
+          fullSound.setVolume(0.05);
+        });
+        agua.add(fullSound);
       }
 
       function dragStarCallback(event) {
@@ -346,10 +360,19 @@
 
         var dato = logica.game(startColor);
         if (dato.charAt(0) == "P") completaSound.play();
-        else if (dato.charAt(0) == "E") {
+        if (dato.charAt(0) == "E") {
           if (failSound.isPlaying) failSound.stop();
           failSound.play();
+        } 
+        if (dato.charAt(0) == "G") {
+          if (fullSound.isPlaying) fullSound.stop();
+          fullSound.play();
+        } 
+        if (dato.charAt(0) == "A") {
+          if (goodSound.isPlaying) goodSound.stop();
+          goodSound.play();
         }
+
         gui
           .add(objetos[0].position, "y", 0, 0)
           .step(1)
