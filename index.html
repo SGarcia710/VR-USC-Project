@@ -290,7 +290,7 @@
         failSound = new THREE.Audio(listener);
         audioLoader.load("./assets/Music/1501.ogg", function(buffer) {
           failSound.setBuffer(buffer);
-          failSound.setVolume(1);
+          failSound.setVolume(0.1);
         });
         agua.add(failSound);
       }
@@ -347,9 +347,7 @@
         var dato = logica.game(startColor);
         if (dato.charAt(0) == "P") completaSound.play();
         else if (dato.charAt(0) == "E") {
-          //if (failSound.isPlaying()) failSound.stop();
-          failSound.play();
-          failSound.stop();
+          if (failSound.isPlaying) failSound.stop();
           failSound.play();
         }
         gui
