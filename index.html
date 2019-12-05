@@ -32,6 +32,8 @@
       var logica = new Logic();
 
       var objetos = [];
+      var aja = [];
+      var temMOLE = [];
       var container;
       var camera, scene, renderer, agua, textureLoader;
       var isMouseDown;
@@ -39,12 +41,13 @@
       var cont;
       var velX, velY, velZ;
       var pickHelper;
-      var gui;
-      var aja = [];
-      var temMOLE = [];
+      var gui,
+        gui2,
+        contadorGUI = 0;
       //Musica
       var geoMusic;
       var completaSound, failSound, fullSound, goodSound, lose, ambientalMusic;
+
       var AtomoTemp = function() {
         this.cant = 0;
       };
@@ -220,7 +223,7 @@
       }
 
       function GUIGuia(light) {
-        var gui2 = dat.GUIVR.create("Colores: ");
+        gui2 = dat.GUIVR.create("Colores: ");
 
         gui2.position.set(-0.25, 2.3, -1);
         gui2.rotation.set(Math.PI / 20, 0, 0);
@@ -356,7 +359,6 @@
         var atomos = logica.cantAtomosTotales;
         var cant = moles.length;
         var bandera = true;
-
         var tem = 0;
 
         for (var i = 0; i < cant; i++) {
@@ -384,7 +386,10 @@
       }
 
       function makeGUI() {
-        if (logica.vidas > 0) {
+        if (contadorGUI == logica.CANTMOLECULAS - 1) {
+          scene.remove(gui);
+          scene.remove(gui2);
+        } else if (logica.vidas > 0) {
           var nombre = logica.cambioColor(startColor);
           var dato = logica.game(startColor);
           switch (dato.charAt(0)) {
@@ -392,6 +397,7 @@
               if (completaSound.isPlaying) completaSound.stop();
               completaSound.play();
               logica.bandera = false;
+              contadorGUI++;
               temMOLE = [];
               aja = [];
               updateGUI();
@@ -429,7 +435,7 @@
       }
 
       function render() {
-        if (logica.vidas > 0) {
+        if (logica.vidas > 0 && contadorGUI < logica.CANTMOLECULAS - 1) {
           var delta = clock.getDelta() * 60;
 
           var x = geoMusic.position.x;

@@ -1,4 +1,5 @@
 class Logic {
+  CANTMOLECULAS = 4;
   //      Atributos:
   // Arreglo de las moleculas
   moleculas = [];
@@ -29,7 +30,6 @@ class Logic {
     this.moleculas.push("C>1|H>4-Metano");
     this.moleculas.push("C>4|H>10-Butano");
     this.moleculas.push("Na>1|Cl>1-Cloruro de sodio");
-    this.moleculas.push("Si>1|O>2-Silice");
     // Se mezcla el arreglo
     this._shuffle();
 
@@ -50,6 +50,10 @@ class Logic {
     return this.vidas;
   }
 
+  get CANTMOLECULAS() {
+    return this.CANTMOLECULAS;
+  }
+
   get nombreMoleculaTotales() {
     return this.nombreMoleculaTotales;
   }
@@ -65,7 +69,7 @@ class Logic {
 
     // Se crea un for i va a disminuir y aux obtendra un numero aleatorio
     for (
-      var i = this.moleculas.length - 1;
+      var i = this.moleculas.length;
       i >= 0;
       i--, aux = Math.floor(Math.random() * (i + 1))
     ) {
@@ -80,39 +84,41 @@ class Logic {
 
   // Metodo inicial de configuracion de juego
   _init() {
-    // Se obtiene un arreglo donde la posicion 1 es la molecula y la 2 es el nombre del compuesto
-    var linea = this.moleculas[this.cont].split("-");
+    if (this.cont < this.CANTMOLECULAS) {
+      // Se obtiene un arreglo donde la posicion 1 es la molecula y la 2 es el nombre del compuesto
+      var linea = this.moleculas[this.cont].split("-");
 
-    // Se dan los valores
-    this.respuesta = linea[0];
-    this.pregunta = linea[1];
+      // Se dan los valores
+      this.respuesta = linea[0];
+      this.pregunta = linea[1];
 
-    // Se obtiene la cantidad de atomos de la molecula
-    var atomos = this.respuesta.split("|");
+      // Se obtiene la cantidad de atomos de la molecula
+      var atomos = this.respuesta.split("|");
 
-    // Se crea una variable donde se almacenaran los datos de la molecula como String
-    var nomenclatura;
+      // Se crea una variable donde se almacenaran los datos de la molecula como String
+      var nomenclatura;
 
-    this.cantAtomos = atomos.length;
+      this.cantAtomos = atomos.length;
 
-    this.cantAtomosActual = [];
-    this.cantAtomosTotales = [];
-    this.nombreMoleculaTotales = [];
+      this.cantAtomosActual = [];
+      this.cantAtomosTotales = [];
+      this.nombreMoleculaTotales = [];
 
-    // Se recorren los atomos
-    for (var i = 0; i < this.cantAtomos; i++) {
-      // Se inicializa el arreglo de cant de atomos por cada atomo
-      this.cantAtomosActual.push(0);
-      // Se alamacenan los datos de la molecula
-      nomenclatura = atomos[i].split(">");
+      // Se recorren los atomos
+      for (var i = 0; i < this.cantAtomos; i++) {
+        // Se inicializa el arreglo de cant de atomos por cada atomo
+        this.cantAtomosActual.push(0);
+        // Se alamacenan los datos de la molecula
+        nomenclatura = atomos[i].split(">");
 
-      // Se inserta la cantidad de atomos correcta en otro arreglo
-      this.cantAtomosTotales.push(nomenclatura[1]);
-      // Se inserta el nombre del atomos correcta en otro arreglo
-      this.nombreMoleculaTotales.push(nomenclatura[0]);
+        // Se inserta la cantidad de atomos correcta en otro arreglo
+        this.cantAtomosTotales.push(nomenclatura[1]);
+        // Se inserta el nombre del atomos correcta en otro arreglo
+        this.nombreMoleculaTotales.push(nomenclatura[0]);
+      }
+      // Aumenta el index del arreglo de preguntas
+      this.cont++;
     }
-    // Aumenta el index del arreglo de preguntas
-    this.cont++;
   }
 
   // Metodo para confirmar que la molecua esta corrcta
