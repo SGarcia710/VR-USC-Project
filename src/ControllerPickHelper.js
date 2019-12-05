@@ -32,6 +32,34 @@ class ControllerPickHelper extends THREE.EventDispatcher {
 
     for (let i = 0; i < 2; ++i) {
       const controller = renderer.vr.getController(i);
+
+      var modelo = new THREE.MTLLoader();
+      mtlLoader.setTexturePath('assets/models/');
+      mtlLoader.setPath('assets/models/');
+      mtlLoader.load('vr_controller_vive.mtl', function (materials) {
+
+          materials.preload();
+
+          var objLoader = new THREE.OBJLoader();
+          objLoader.setMaterials(materials);
+          objLoader.setPath('assets/models/');
+          objLoader.load('vr_controller_vive.obj', function (object) {
+
+              scene.add(object);
+              object.position.x = -0.25;
+              object.position.y = 1.4;
+              object.position.z = -0.5;
+              
+              //object.scale.x = 50;
+              //object.scale.y = 50;
+              //object.scale.z = 50;
+
+          });
+
+      });
+
+      controller.add(modelo);
+
       controller.addEventListener("select", selectListener);
       controller.addEventListener("selectstart", selectListener);
       controller.addEventListener("selectend", endListener);
