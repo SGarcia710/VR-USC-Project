@@ -137,27 +137,45 @@
         for (var i = 0, j = 0; i < CANTATOMOS; i++, j++) {
           if (j == 6) j = 0;
 
-          var prueba = new THREE.Mesh(
+          var object = new THREE.Mesh(
             new THREE.SphereGeometry(RADIUS + 0.1, RADIUS + 0.1, RADIUS + 0.1),
             new THREE.MeshLambertMaterial({ color: colors[j], wireframe: true })
           );
 
-          var object = new THREE.Mesh(
+          var prueba = new THREE.Mesh(
             geometry,
             new THREE.MeshLambertMaterial({ color: colors[j] })
           );
 
+          // AGREGA EL BORDE 
           object.add(prueba);
           object.position.x = Math.random() * 4 - 2;
           object.position.y = Math.random() * 20 + 1;
           object.position.z = Math.random() * 4 - 2;
-          object.userData.velocity = new THREE.Vector3();
-          object.userData.velocity.x = Math.random() * 0.01 - 0.005;
-          object.userData.velocity.y = Math.random() * 0.01 - 0.005;
-          object.userData.velocity.z = Math.random() * 0.01 - 0.005;
+
+          var Vv = new THREE.Vector3();
+          var Vx = Math.random() * 0.01 - 0.005;
+          var Vy = Math.random() * 0.01 - 0.005;
+          var Vz = Math.random() * 0.01 - 0.005;
+                    
+          object.userData.velocity = Vv;
+          object.userData.velocity.x = Vx;
+          object.userData.velocity.y = Vy;
+          object.userData.velocity.z = Vz;
+
+          prueba.userData.velocity = Vv;
+          prueba.userData.velocity.x = Vx;
+          prueba.userData.velocity.y = Vy;
+          prueba.userData.velocity.z = Vz;
+
           object.userData.grab = false;
           object.castShadow = true;
           object.receiveShadow = true;
+
+          prueba.userData.grab = false;
+          prueba.castShadow = true;
+          prueba.receiveShadow = true;
+
           objetos.push(object);
           scene.add(object);
         }
