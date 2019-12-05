@@ -34,15 +34,21 @@
       var objetos = [];
       var container;
       var camera, scene, renderer, agua, textureLoader;
-      var room;
       var isMouseDown;
       var startColor;
       var cont;
       var velX, velY, velZ;
       var pickHelper;
-      var gui, gui2;
-      var geoMusic;
+      var gui;
+      var aja = [];
+      var temMOLE = [];
+      //Musica
+      var geoMusic,
+        first = false;
       var completaSound, failSound, fullSound, goodSound, lose;
+      var AtomoTemp = function() {
+        this.cant = 0;
+      };
 
       init();
       animate();
@@ -215,7 +221,7 @@
       }
 
       function GUIGuia(light) {
-        gui2 = dat.GUIVR.create("Colores: ");
+        var gui2 = dat.GUIVR.create("Colores: ");
 
         gui2.position.set(-0.25, 2.3, -1);
         gui2.rotation.set(Math.PI / 20, 0, 0);
@@ -340,44 +346,61 @@
         event.object.material.color.setHex(startColor);
       }
 
+      function updateGUI() {
+        scene.remove(gui);
+        gui = dat.GUIVR.create("Formula a realizar: " + logica.pregunta + ".");
+
+        gui.position.set(-0.25, 1.4, -1);
+        gui.rotation.set(Math.PI / 20, 0, 0);
+        scene.add(gui);
+        var moles = logica.nombreMoleculaTotales;
+        var atomos = logica.cantAtomosTotales;
+        var cant = moles.length;
+        var bandera = true;
+
+        var tem = 0;
+
+        for (var i = 0; i < cant; i++) {
+          bandera = true;
+          for (var j = i + 1; j < cant; j++)
+            if (moles[i] == moles[j]) {
+              bandera = false;
+              break;
+            }
+          if (bandera) {
+            aja.push(new AtomoTemp());
+            temMOLE.push(moles[i]);
+            gui.add(aja[tem], "cant", 0, atomos[i]).name(temMOLE[tem]);
+            tem++;
+          }
+        }
+      }
+
+      function aumento(atomo) {
+        for (var i = 0; i < temMOLE.length; i++)
+          if (atomo == temMOLE[i]) {
+            aja[i].cant++;
+            return;
+          }
+      }
+
       function makeGUI() {
         if (logica.vidas > 0) {
-          scene.remove(gui);
-          gui = dat.GUIVR.create(
-            "Formula a realizar: " + logica.pregunta + "."
-          );
-
-          var evento = dat.GUIVR.create(
-            "Formula a realizar: " + logica.pregunta + "."
-          );
-
-          gui.position.set(-0.25, 1.4, -1);
-          gui.rotation.set(Math.PI / 20, 0, 0);
-          scene.add(gui);
-          var moles = logica.nombreMoleculaTotales;
-          var atomos = logica.cantAtomosTotales;
-          var cant = moles.length;
-          var bandera = true;
-          for (var i = 0; i < cant; i++) {
-            bandera = true;
-            for (var j = i + 1; j < cant; j++)
-              if (moles[i] == moles[j]) {
-                bandera = false;
-                break;
-              }
-            if (bandera)
-              gui
-                .add(objetos[0].position, "y", atomos[i], atomos[i])
-                .step(1)
-                .name(moles[i]);
+          if (!first) {
+            updateGUI();
+            first = true;
           }
 
+          var nombre = logica.cambioColor(startColor);
           var dato = logica.game(startColor);
           switch (dato.charAt(0)) {
             case "P":
               if (completaSound.isPlaying) completaSound.stop();
               completaSound.play();
               logica.bandera = false;
+              first = false;
+              aumento(nombre);
+              updateGUI();
               return makeGUI();
             case "E":
               if (failSound.isPlaying) failSound.stop();
@@ -390,17 +413,14 @@
             case "A":
               if (goodSound.isPlaying) goodSound.stop();
               goodSound.play();
+              aumento(nombre);
+              updateGUI();
               break;
             case "N":
               if (lose.isPlaying) lose.stop();
               lose.play();
               break;
           }
-
-          gui
-            .add(objetos[0].position, "y", 0, 0)
-            .step(1)
-            .name(dato);
         }
       }
 

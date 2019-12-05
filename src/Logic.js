@@ -166,10 +166,8 @@ class Logic {
               this._init();
               return "P";
             }
-            // Si la cantidad de atomos es igual a la necesaria
-            if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
-              return "Se llenó el átomo " + atomo;
-            else return "Aumentó 1 al átomo " + atomo;
+
+            return "Aumentó 1 al átomo " + atomo;
             // Si la cantidad de atomos es igual a la necesaria antes de realizar el aumento en 1
           } else if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
             return "Grupo '" + atomo + "' lleno";
