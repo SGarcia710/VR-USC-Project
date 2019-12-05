@@ -15,6 +15,12 @@
     <script src="./src/Logic.js"></script>
     <script src="./src/datguivr.js"></script>
     <script src="./src/perlin.js"></script>
+    <style>
+        *{
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
   </head>
 
   <body>
@@ -140,16 +146,16 @@
 
           var object = new THREE.Mesh(
             new THREE.SphereGeometry(RADIUS + 0.1, RADIUS + 0.1, RADIUS + 0.1),
-            new THREE.MeshLambertMaterial({ color: colors[j], wireframe: true })
+            new THREE.MeshLambertMaterial({ color: 0xffffff, wireframe: true })
           );
 
-          var prueba = new THREE.Mesh(
+          var atomo = new THREE.Mesh(
             geometry,
             new THREE.MeshLambertMaterial({ color: colors[j] })
           );
 
           // AGREGA EL BORDE 
-          object.add(prueba);
+          object.add(atomo);
           object.position.x = Math.random() * 4 - 2;
           object.position.y = Math.random() * 20 + 1;
           object.position.z = Math.random() * 4 - 2;
@@ -164,22 +170,25 @@
           object.userData.velocity.y = Vy;
           object.userData.velocity.z = Vz;
 
-          prueba.userData.velocity = Vv;
-          prueba.userData.velocity.x = Vx;
-          prueba.userData.velocity.y = Vy;
-          prueba.userData.velocity.z = Vz;
+          atomo.userData.velocity = Vv;
+          atomo.userData.velocity.x = Vx;
+          atomo.userData.velocity.y = Vy;
+          atomo.userData.velocity.z = Vz;
 
-          prueba.scale.x = 0.04;
-          prueba.scale.y = 0.04;
-          prueba.scale.z = 0.04;
+          atomo.scale.x = 0.04;
+          atomo.scale.y = 0.04;
+          atomo.scale.z = 0.04;
+
+          object.material.opacity = 0.2;
+          object.material.transparent = true;
 
           object.userData.grab = false;
           object.castShadow = true;
           object.receiveShadow = true;
 
-          prueba.userData.grab = false;
-          prueba.castShadow = true;
-          prueba.receiveShadow = true;
+          atomo.userData.grab = false;
+          atomo.castShadow = true;
+          atomo.receiveShadow = true;
 
           objetos.push(object);
           scene.add(object);
@@ -552,10 +561,12 @@
               }
             });
 
+            // change '0.003' for more aggressive animation
             var time = performance.now() * 0.006;
 
             var aux = element.children[ 0 ];
 
+            // change 'k' value for more spikes
             var k = 4;
             for (var i = 0; i < aux.geometry.vertices.length; i++) {
                 var p = aux.geometry.vertices[i];
