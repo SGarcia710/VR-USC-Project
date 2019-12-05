@@ -42,7 +42,7 @@
       var pickHelper;
       var gui, gui2;
       var geoMusic;
-      var completaSound, failSound, fullSound, goodSound;
+      var completaSound, failSound, fullSound, goodSound, lose;
 
       init();
       animate();
@@ -307,6 +307,13 @@
           fullSound.setVolume(0.05);
         });
         agua.add(fullSound);
+
+        lose = new THREE.Audio(listener);
+        audioLoader.load("./assets/Music/StormMagic.ogg", function(buffer) {
+          lose.setBuffer(buffer);
+          lose.setVolume(0.05);
+        });
+        agua.add(lose);
       }
 
       function dragStarCallback(event) {
@@ -334,52 +341,67 @@
       }
 
       function makeGUI() {
-        scene.remove(gui);
-        gui = dat.GUIVR.create("Formula a realizar: " + logica.pregunta + ".");
+        if (logica.vidas > 0) {
+          scene.remove(gui);
+          gui = dat.GUIVR.create(
+            "Formula a realizar: " + logica.pregunta + "."
+          );
 
-        gui.position.set(-0.25, 1.4, -1);
-        gui.rotation.set(Math.PI / 20, 0, 0);
-        scene.add(gui);
-        var moles = logica.getMol();
-        var atomos = logica.getAT();
-        var cant = moles.length;
-        var bandera = true;
-        for (var i = 0; i < cant; i++) {
-          bandera = true;
-          for (var j = i + 1; j < cant; j++)
-            if (moles[i] == moles[j]) {
-              bandera = false;
+          var evento = dat.GUIVR.create(
+            "Formula a realizar: " + logica.pregunta + "."
+          );
+
+          gui.position.set(-0.25, 1.4, -1);
+          gui.rotation.set(Math.PI / 20, 0, 0);
+          scene.add(gui);
+          var moles = logica.nombreMoleculaTotales;
+          var atomos = logica.cantAtomosTotales;
+          var cant = moles.length;
+          var bandera = true;
+          for (var i = 0; i < cant; i++) {
+            bandera = true;
+            for (var j = i + 1; j < cant; j++)
+              if (moles[i] == moles[j]) {
+                bandera = false;
+                break;
+              }
+            if (bandera)
+              gui
+                .add(objetos[0].position, "y", atomos[i], atomos[i])
+                .step(1)
+                .name(moles[i]);
+          }
+
+          var dato = logica.game(startColor);
+          switch (dato.charAt(0)) {
+            case "P":
+              if (completaSound.isPlaying) completaSound.stop();
+              completaSound.play();
+              logica.bandera = false;
+              return makeGUI();
+            case "E":
+              if (failSound.isPlaying) failSound.stop();
+              failSound.play();
               break;
-            }
-          if (bandera)
-            gui
-              .add(objetos[0].position, "y", atomos[i], atomos[i])
-              .step(1)
-              .name(moles[i]);
-        }
+            case "G":
+              if (fullSound.isPlaying) fullSound.stop();
+              fullSound.play();
+              break;
+            case "A":
+              if (goodSound.isPlaying) goodSound.stop();
+              goodSound.play();
+              break;
+            case "N":
+              if (lose.isPlaying) lose.stop();
+              lose.play();
+              break;
+          }
 
-        var dato = logica.game(startColor);
-        if (dato.charAt(0) == "P") {
-          if (completaSound.isPlaying) completaSound.stop();
-          completaSound.play();
+          gui
+            .add(objetos[0].position, "y", 0, 0)
+            .step(1)
+            .name(dato);
         }
-        if (dato.charAt(0) == "E") {
-          if (failSound.isPlaying) failSound.stop();
-          failSound.play();
-        }
-        if (dato.charAt(0) == "G") {
-          if (fullSound.isPlaying) fullSound.stop();
-          fullSound.play();
-        }
-        if (dato.charAt(0) == "A" /* || dato.charAt(0) == "A" */) {
-          if (goodSound.isPlaying) goodSound.stop();
-          goodSound.play();
-        }
-
-        gui
-          .add(objetos[0].position, "y", 0, 0)
-          .step(1)
-          .name(dato);
       }
 
       function onWindowResize() {
@@ -393,85 +415,87 @@
       }
 
       function render() {
-        var delta = clock.getDelta() * 60;
+        if (logica.vidas > 0) {
+          var delta = clock.getDelta() * 60;
 
-        var x = geoMusic.position.x;
-        var z = geoMusic.position.z;
-        geoMusic.position.x = x * Math.cos(0.01) - z * Math.sin(0.01);
-        geoMusic.position.z = z * Math.cos(0.01) + x * Math.sin(0.01);
+          var x = geoMusic.position.x;
+          var z = geoMusic.position.z;
+          geoMusic.position.x = x * Math.cos(0.01) - z * Math.sin(0.01);
+          geoMusic.position.z = z * Math.cos(0.01) + x * Math.sin(0.01);
 
-        if (cont == CANTATOMOS) cont = 0;
+          if (cont == CANTATOMOS) cont = 0;
 
-        if (isMouseDown === true && cont < CANTATOMOS) {
-          var cube = objetos[cont];
-          if (!cube.userData.grab) {
-            objetos.pop(0);
-            cube.position.applyQuaternion(camera.quaternion);
-            cube.userData.velocity.x = (Math.random() - 0.5) * 0.01 * delta;
-            cube.userData.velocity.y = (Math.random() - 0.5) * 0.01 * delta;
-            cube.userData.velocity.z = (Math.random() * 0.01 - 0.025) * delta;
-            cube.userData.velocity.applyQuaternion(camera.quaternion);
-            objetos.push(cube);
-          }
-          cont++;
-        }
-
-        objetos.forEach(element => {
-          var cube = element;
-          cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
-          cube.position.add(cube.userData.velocity);
-          if (
-            cube.position.x < -PAREDESCUADRO ||
-            cube.position.x > PAREDESCUADRO
-          ) {
-            cube.position.x = THREE.Math.clamp(
-              cube.position.x,
-              -PAREDESCUADRO,
-              PAREDESCUADRO
-            );
-            cube.userData.velocity.x = -cube.userData.velocity.x;
-          }
-          if (cube.position.y < 0 || cube.position.y > PAREDESCUADRO) {
-            cube.position.y = THREE.Math.clamp(
-              cube.position.y,
-              0,
-              PAREDESCUADRO
-            );
-            cube.userData.velocity.y = -cube.userData.velocity.y;
-          }
-          if (
-            cube.position.z < -PAREDESCUADRO ||
-            cube.position.z > PAREDESCUADRO
-          ) {
-            cube.position.z = THREE.Math.clamp(
-              cube.position.z,
-              -PAREDESCUADRO,
-              PAREDESCUADRO
-            );
-            cube.userData.velocity.z = -cube.userData.velocity.z;
-          }
-          cube.rotation.x += cube.userData.velocity.x * 2 * delta;
-          cube.rotation.y += cube.userData.velocity.y * 2 * delta;
-          cube.rotation.z += cube.userData.velocity.z * 2 * delta;
-
-          objetos.forEach(element2 => {
-            var object2 = element2;
-            normal.copy(cube.position).sub(object2.position);
-            var distance = normal.length();
-            if (distance < 2 * RADIUS) {
-              normal.multiplyScalar(0.5 * distance - RADIUS);
-              cube.position.sub(normal);
-              object2.position.add(normal);
-              normal.normalize();
-              relativeVelocity
-                .copy(cube.userData.velocity)
-                .sub(object2.userData.velocity);
-              normal = normal.multiplyScalar(relativeVelocity.dot(normal));
-              cube.userData.velocity.sub(normal);
-              object2.userData.velocity.add(normal);
+          if (isMouseDown === true && cont < CANTATOMOS) {
+            var cube = objetos[cont];
+            if (!cube.userData.grab) {
+              objetos.pop(0);
+              cube.position.applyQuaternion(camera.quaternion);
+              cube.userData.velocity.x = (Math.random() - 0.5) * 0.01 * delta;
+              cube.userData.velocity.y = (Math.random() - 0.5) * 0.01 * delta;
+              cube.userData.velocity.z = (Math.random() * 0.01 - 0.025) * delta;
+              cube.userData.velocity.applyQuaternion(camera.quaternion);
+              objetos.push(cube);
             }
+            cont++;
+          }
+
+          objetos.forEach(element => {
+            var cube = element;
+            cube.userData.velocity.multiplyScalar(1 - 0.001 * delta);
+            cube.position.add(cube.userData.velocity);
+            if (
+              cube.position.x < -PAREDESCUADRO ||
+              cube.position.x > PAREDESCUADRO
+            ) {
+              cube.position.x = THREE.Math.clamp(
+                cube.position.x,
+                -PAREDESCUADRO,
+                PAREDESCUADRO
+              );
+              cube.userData.velocity.x = -cube.userData.velocity.x;
+            }
+            if (cube.position.y < 0 || cube.position.y > PAREDESCUADRO) {
+              cube.position.y = THREE.Math.clamp(
+                cube.position.y,
+                0,
+                PAREDESCUADRO
+              );
+              cube.userData.velocity.y = -cube.userData.velocity.y;
+            }
+            if (
+              cube.position.z < -PAREDESCUADRO ||
+              cube.position.z > PAREDESCUADRO
+            ) {
+              cube.position.z = THREE.Math.clamp(
+                cube.position.z,
+                -PAREDESCUADRO,
+                PAREDESCUADRO
+              );
+              cube.userData.velocity.z = -cube.userData.velocity.z;
+            }
+            cube.rotation.x += cube.userData.velocity.x * 2 * delta;
+            cube.rotation.y += cube.userData.velocity.y * 2 * delta;
+            cube.rotation.z += cube.userData.velocity.z * 2 * delta;
+
+            objetos.forEach(element2 => {
+              var object2 = element2;
+              normal.copy(cube.position).sub(object2.position);
+              var distance = normal.length();
+              if (distance < 2 * RADIUS) {
+                normal.multiplyScalar(0.5 * distance - RADIUS);
+                cube.position.sub(normal);
+                object2.position.add(normal);
+                normal.normalize();
+                relativeVelocity
+                  .copy(cube.userData.velocity)
+                  .sub(object2.userData.velocity);
+                normal = normal.multiplyScalar(relativeVelocity.dot(normal));
+                cube.userData.velocity.sub(normal);
+                object2.userData.velocity.add(normal);
+              }
+            });
           });
-        });
+        }
         //pickHelper.update(scene, delta, objetos);
         renderer.render(scene, camera);
       }

@@ -16,8 +16,11 @@ class Logic {
   cantAtomosTotales = [];
   // Se define un arreglo segun la nomenclatura del atomos que requiere la molecula
   nombreMoleculaTotales = [];
+  // Se define una bandera para saber si es la primera vez que se ingresa a la logica
   bandera = false;
-
+  // Se define la cantidad de vidas que se tiene en el juego
+  vidas = 3;
+  //
   cantAtomos = 0;
 
   constructor() {
@@ -34,16 +37,24 @@ class Logic {
     this._init();
   }
 
+  set bandera(bandera) {
+    this.bandera = bandera;
+  }
+
   // Metodo de obtener la pregunta
   get pregunta() {
     return this.pregunta;
   }
 
-  getMol() {
+  get vidas() {
+    return this.vidas;
+  }
+
+  get nombreMoleculaTotales() {
     return this.nombreMoleculaTotales;
   }
 
-  getAT() {
+  get cantAtomosTotales() {
     return this.cantAtomosTotales;
   }
 
@@ -135,33 +146,40 @@ class Logic {
       this.bandera = true;
       return "Seleccione una particula";
     }
-    var atomo = this.cambioColor(color);
-    // Variable de Index
-    var i = 0;
 
-    // Se recorren los atomos
-    for (i = 0; i < this.cantAtomos; i++)
-      // Si el atomo enviado esta en la molecula
-      if (atomo == this.nombreMoleculaTotales[i])
-        if (this.cantAtomosActual[i] < this.cantAtomosTotales[i]) {
-          // Si el valor de este atomo es menor al necesario
-          // el valor del atomo aumenta en 1
-          this.cantAtomosActual[i]++;
-          // Se llama a la valoracion para verificar si se completo la molecula
-          if (this._valoracion()) {
-            // Vuelvo a llamar a la configuracion
-            this._init();
-            return "PARTICULA COMPLETA";
-          }
-          // Si la cantidad de atomos es igual a la necesaria
-          if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
-            return "Se llenó el átomo " + atomo;
-          else return "Aumentó 1 al átomo " + atomo;
-          // Si la cantidad de atomos es igual a la necesaria antes de realizar el aumento en 1
-        } else if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
-          return "Grupo '" + atomo + "' lleno";
+    if (this.vidas > 0) {
+      var atomo = this.cambioColor(color);
+      // Variable de Index
+      var i = 0;
 
-    // Si i es 0 quiere decir que no se encontro el atomo en la molecula
-    if (i != 0) return "Error en el átomo: " + atomo;
+      // Se recorren los atomos
+      for (i = 0; i < this.cantAtomos; i++)
+        // Si el atomo enviado esta en la molecula
+        if (atomo == this.nombreMoleculaTotales[i])
+          if (this.cantAtomosActual[i] < this.cantAtomosTotales[i]) {
+            // Si el valor de este atomo es menor al necesario
+            // el valor del atomo aumenta en 1
+            this.cantAtomosActual[i]++;
+            // Se llama a la valoracion para verificar si se completo la molecula
+            if (this._valoracion()) {
+              // Vuelvo a llamar a la configuracion
+              this._init();
+              return "P";
+            }
+            // Si la cantidad de atomos es igual a la necesaria
+            if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
+              return "Se llenó el átomo " + atomo;
+            else return "Aumentó 1 al átomo " + atomo;
+            // Si la cantidad de atomos es igual a la necesaria antes de realizar el aumento en 1
+          } else if (this.cantAtomosActual[i] == this.cantAtomosTotales[i])
+            return "Grupo '" + atomo + "' lleno";
+
+      // Si i es 0 quiere decir que no se encontro el atomo en la molecula
+      if (i != 0) {
+        this.vidas--;
+        if (this.vidas > 0) return "Error en el átomo: " + atomo;
+        return "No tiene mas vidas.";
+      }
+    } else return "No tiene mas vidas.";
   }
 }
