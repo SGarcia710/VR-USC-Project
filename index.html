@@ -14,6 +14,7 @@
     <script src="./src/Refractor.js"></script>
     <script src="./src/Logic.js"></script>
     <script src="./src/datguivr.js"></script>
+    <script src="./src/perlin.js"></script>
   </head>
 
   <body>
@@ -24,7 +25,7 @@
 
       const RADIUS = 0.15;
       const PAREDESCUADRO = 4;
-      const CANTATOMOS = 200;
+      const CANTATOMOS = 100;
 
       var clock = new THREE.Clock();
       var normal = new THREE.Vector3();
@@ -167,6 +168,10 @@
           prueba.userData.velocity.x = Vx;
           prueba.userData.velocity.y = Vy;
           prueba.userData.velocity.z = Vz;
+
+          prueba.scale.x = 0.04;
+          prueba.scale.y = 0.04;
+          prueba.scale.z = 0.04;
 
           object.userData.grab = false;
           object.castShadow = true;
@@ -546,6 +551,20 @@
                 object2.userData.velocity.add(normal);
               }
             });
+
+            var time = performance.now() * 0.006;
+
+            var aux = element.children[ 0 ];
+
+            var k = 4;
+            for (var i = 0; i < aux.geometry.vertices.length; i++) {
+                var p = aux.geometry.vertices[i];
+                p.normalize().multiplyScalar(5 + 0.5 * noise.perlin3(p.x * k + time, p.y * k, p.z * k));
+            }
+            aux.geometry.computeVertexNormals();
+            aux.geometry.normalsNeedUpdate = true;
+            aux.geometry.verticesNeedUpdate = true;
+
           });
         } else ambientalMusic.stop();
         //pickHelper.update(scene, delta, objetos);
