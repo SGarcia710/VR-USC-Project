@@ -146,7 +146,7 @@
 
           var object = new THREE.Mesh(
             new THREE.SphereGeometry(RADIUS + 0.1, RADIUS + 0.1, RADIUS + 0.1),
-            new THREE.MeshLambertMaterial({ color: 0xffffff, wireframe: true })
+            new THREE.MeshLambertMaterial({ color: colors[j], wireframe: true })
           );
 
           var atomo = new THREE.Mesh(
@@ -179,7 +179,7 @@
           atomo.scale.y = 0.04;
           atomo.scale.z = 0.04;
 
-          object.material.opacity = 0.2;
+          object.material.opacity = 0.1;
           object.material.transparent = true;
 
           object.userData.grab = false;
