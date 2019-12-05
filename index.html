@@ -43,9 +43,8 @@
       var aja = [];
       var temMOLE = [];
       //Musica
-      var geoMusic,
-        first = false;
-      var completaSound, failSound, fullSound, goodSound, lose;
+      var geoMusic;
+      var completaSound, failSound, fullSound, goodSound, lose, ambientalMusic;
       var AtomoTemp = function() {
         this.cant = 0;
       };
@@ -149,7 +148,7 @@
         renderer.vr.enabled = true;
         container.appendChild(renderer.domElement);
 
-        makeGUI();
+        updateGUI();
 
         window.addEventListener("resize", onWindowResize, false);
 
@@ -267,7 +266,7 @@
         camera.add(listener);
         var audioLoader = new THREE.AudioLoader();
 
-        var ambientalMusic = new THREE.PositionalAudio(listener);
+        ambientalMusic = new THREE.PositionalAudio(listener);
         audioLoader.load("./assets/Music/FromHere.ogg", function(buffer) {
           ambientalMusic.setBuffer(buffer);
           ambientalMusic.setLoop(true);
@@ -384,18 +383,8 @@
           }
       }
 
-      function reset(atomo) {
-        temMOLE = [];
-        aja = [];
-      }
-
       function makeGUI() {
         if (logica.vidas > 0) {
-          if (!first) {
-            updateGUI();
-            first = true;
-          }
-
           var nombre = logica.cambioColor(startColor);
           var dato = logica.game(startColor);
           switch (dato.charAt(0)) {
@@ -403,8 +392,8 @@
               if (completaSound.isPlaying) completaSound.stop();
               completaSound.play();
               logica.bandera = false;
-              first = false;
-              reset();
+              temMOLE = [];
+              aja = [];
               updateGUI();
               return makeGUI();
             case "E":
@@ -520,7 +509,7 @@
               }
             });
           });
-        }
+        } else ambientalMusic.stop();
         //pickHelper.update(scene, delta, objetos);
         renderer.render(scene, camera);
       }
