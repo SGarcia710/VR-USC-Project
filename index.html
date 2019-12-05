@@ -136,10 +136,18 @@
 
         for (var i = 0, j = 0; i < CANTATOMOS; i++, j++) {
           if (j == 6) j = 0;
+
+          var prueba = new THREE.Mesh(
+            new THREE.SphereGeometry(RADIUS + 0.1, RADIUS + 0.1, RADIUS + 0.1),
+            new THREE.MeshLambertMaterial({ color: colors[j], wireframe: true })
+          );
+
           var object = new THREE.Mesh(
             geometry,
             new THREE.MeshLambertMaterial({ color: colors[j] })
           );
+
+          object.add(prueba);
           object.position.x = Math.random() * 4 - 2;
           object.position.y = Math.random() * 20 + 1;
           object.position.z = Math.random() * 4 - 2;
@@ -443,14 +451,12 @@
       }
 
       function render() {
+        var x = geoMusic.position.x;
+        var z = geoMusic.position.z;
+        geoMusic.position.x = x * Math.cos(0.01) - z * Math.sin(0.01);
+        geoMusic.position.z = z * Math.cos(0.01) + x * Math.sin(0.01);
         if (logica.vidas > 0 && contadorGUI < logica.CANTMOLECULAS - 1) {
           var delta = clock.getDelta() * 60;
-
-          var x = geoMusic.position.x;
-          var z = geoMusic.position.z;
-          geoMusic.position.x = x * Math.cos(0.01) - z * Math.sin(0.01);
-          geoMusic.position.z = z * Math.cos(0.01) + x * Math.sin(0.01);
-
           if (cont == CANTATOMOS) cont = 0;
 
           if (isMouseDown === true && cont < CANTATOMOS) {
